@@ -4,23 +4,21 @@ from newspaper import Article
 import markdown
 from bs4 import BeautifulSoup
 import os
-from dotenv import load_dotenv  # ✅ Import dotenv
+from dotenv import load_dotenv
 
-# ✅ Load environment variables from .env file
+# ✅ Load environment variables
 load_dotenv()
-
-# ✅ Get the API key securely
 api_key = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=api_key)
 
-# Load the Gemini model
+# ✅ Setup Gemini API
+genai.configure(api_key=api_key)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Dummy credentials
+# ✅ Dummy login credentials
 USERNAME = "admin"
 PASSWORD = "1234"
 
-# Summarization function
+# ✅ Summarize article function
 def summarize_article(url, language):
     try:
         article = Article(url)
@@ -49,7 +47,7 @@ def summarize_article(url, language):
     except Exception as e:
         return f"❌ Error: {e}", None
 
-# Gradio UI with login system and summary display
+# ✅ Gradio UI with login + language + scroll
 with gr.Blocks() as demo:
     gr.Markdown("## 🔐 Login to Access Gemini Article Summarizer")
 
@@ -70,7 +68,7 @@ with gr.Blocks() as demo:
         summarize_button = gr.Button("Summarize")
         summary_output = gr.Textbox(
             label="📄 Summarized Article",
-            lines=15,
+            lines=20,
             interactive=False,
             show_copy_button=True
         )
@@ -94,5 +92,9 @@ with gr.Blocks() as demo:
         outputs=[login_msg, login_row, main_app]
     )
 
-# Launch the app
-demo.launch(share=True)
+# ✅ Run app on correct host and port for Render
+if __name__ == "__main__":
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 7860))
+    )
